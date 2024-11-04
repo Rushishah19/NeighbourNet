@@ -16,6 +16,8 @@ export function CustomerDashboard() {
   const allLocations = [...new Set(workers.map(w => w.location))];
   const ratingOptions = ['4.5+', '4.0+', '3.5+', '3.0+', 'All'];
 
+
+  
   const filteredWorkers = workers.filter((worker) => {
     const matchesSearch = worker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));

@@ -15,12 +15,12 @@ export function WorkerDashboard() {
     hourlyRate: 0,
     experience: 0,
     location: '',
-    availability: '',
+    availability: [],
     rating: 0,
     completedJobs: 0,
     description: '',
     certifications: [],
-    photo:'',
+    photo:' ',
     availabilityNumber: 0,
   });
   const uploadPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,14 +196,14 @@ export function WorkerDashboard() {
               {isEditing ? (
                 <input
                   type="text"
-                  value={formData.availability}
+                  value={formData.availability.join(',')}
                   onChange={(e) =>
-                    setFormData({ ...formData, availability: e.target.value })
+                    setFormData({ ...formData, availability: e.target.value.split(',').map((a) => a.trim()), })
                   }
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
               ) : (
-                <p className="text-lg">{formData.availability}</p>
+                <p className="text-lg">{formData.availability.join(',')}</p>
               )}
             </div>
 
