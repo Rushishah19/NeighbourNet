@@ -5,7 +5,7 @@ import { ContactModal } from '../components/ContactModal.tsx';
 import { Worker } from '../types';
 
 export function CustomerDashboard() {
-  const workers = useStore((state) => state.workers);
+  const workers = useStore((state) => state.workers) || ['9:00 AM - 10:00 AM','10:00 AM - 11:00 AM','11:00 AM - 12:00 PM','12:00 PM - 1:00 PM ','1:00 PM - 2:00 PM','3:00 PM - 4:00 PM','4:00 PM - 5:00 PM','5:00 PM - 6:00 PM'];
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -15,6 +15,31 @@ export function CustomerDashboard() {
   const allSkills = [...new Set(workers.flatMap(w => w.skills))];
   const allLocations = [...new Set(workers.map(w => w.location))];
   const ratingOptions = ['4.5+', '4.0+', '3.5+', '3.0+', 'All'];
+
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<Record<string, Set<string>>>({});
+  console.log("Workers:", workers);
+  console.log("Selected Time Slots:", selectedTimeSlots);
+  
+  // Toggle selected time slot for a specific worker
+const toggleTimeSlot = (workerId: string, timeSlot: string) => {
+  setSelectedTimeSlots((prev) => {
+    const workerSlots = prev[workerId] || new Set();
+    const updatedSlots = new Set(workerSlots);
+    
+    if (updatedSlots.has(timeSlot)) {
+      updatedSlots.delete(timeSlot);
+    } else {
+      updatedSlots.add(timeSlot);
+    }
+
+    return { ...prev, [workerId]: updatedSlots };
+  });
+};
+
+// Check if a time slot is selected for a worker
+const isSlotSelected = (workerId: string, timeSlot: string) => {
+  return selectedTimeSlots[workerId]?.has(timeSlot) ?? false;
+};
 
 
   
@@ -151,6 +176,29 @@ export function CustomerDashboard() {
                 <Clock size={16} className="mr-2" />
                 {worker.availabilityNumber}/hour
               </div>
+              
+              <div className="mt-4">
+  <div className="text-sm font-medium text-gray-700 mb-2">Available Time Slots</div>
+  <div className="grid grid-cols-4 gap-2">
+    {worker.availableTimeSlots && worker.availableTimeSlots.length > 0 ? (
+      worker.availableTimeSlots.map((timeSlot: string) => (
+        <button
+          key={timeSlot}
+          onClick={() => toggleTimeSlot(worker.id, timeSlot)}
+          className={`px-2 py-1 rounded-md text-sm ${
+            isSlotSelected(worker.id, timeSlot) ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+          }`}
+        >
+          {timeSlot}
+        </button>
+      ))
+    ) : (
+      <div className="text-gray-500">No available time slots</div>
+    )}
+  </div>
+</div>
+
+
               <div className="flex items-center text-gray-600">
                 <Briefcase size={16} className="mr-2" />
                 {worker.experience} years experience

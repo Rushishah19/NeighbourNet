@@ -14,7 +14,7 @@ export interface Worker {
   description: string;
   certifications: string[];
   photo?: string | null,
-  
+  availableTimeSlots: string[];
 }
 
 export interface User {
