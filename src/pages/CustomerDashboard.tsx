@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '../store';
 import { Star, MapPin, Clock, DollarSign, Briefcase, Award, Wallet, Search, CalendarIcon, MessageSquare } from 'lucide-react';
-import { ContactModal } from '../components/ContactModal';
+import { ContactModal } from '../components/ContactModal.tsx';
 import { Worker } from '../types';
 
 export function CustomerDashboard() {
