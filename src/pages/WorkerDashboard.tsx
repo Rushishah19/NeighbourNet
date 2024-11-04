@@ -11,17 +11,18 @@ export function WorkerDashboard() {
     name: currentUser?.name || '',
     email: currentUser?.email || '',
     phone: currentUser?.phone || '',
-    skills: [],
+    skills: [] as string[],
     hourlyRate: 0,
     experience: 0,
     location: '',
-    availability: [],
+    availability: [] as string[],
     rating: 0,
     completedJobs: 0,
     description: '',
-    certifications: [],
+    certifications: [] as string[],
     photo:' ',
     availabilityNumber: 0,
+    availableTimeSlots: [] as string[],
   });
   const uploadPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];

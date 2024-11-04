@@ -82,7 +82,7 @@ export const useStore = create<AppState>((set, get) => ({
       location: 'Calgary, AB',
       availability: ['Mon-Sat'],
       availabilityNumber: 40,
-      rating: 4.7,
+      rating: 3.7,
       completedJobs: 189,
       description: 'HVAC specialist with refrigeration expertise',
       certifications: ['HVAC License', 'Refrigeration Technician Certificate'],
