@@ -6,6 +6,7 @@ export function WorkerDashboard() {
   const { currentUser, workers, updateWorker } = useStore();
   const [isEditing, setIsEditing] = useState(false);
   const worker = workers.find(w => w.id === currentUser?.id);
+  const [newTimeSlot, setNewTimeSlot] = useState('');
   const [formData, setFormData] = useState(worker || {
     id: currentUser?.id || '',
     name: currentUser?.name || '',
@@ -32,6 +33,24 @@ export function WorkerDashboard() {
     } else {
       alert("Please upload a valid image file.");
     }
+  };
+
+
+  const addTimeSlot = () => {
+    if (newTimeSlot && !formData.availableTimeSlots.includes(newTimeSlot)) {
+      setFormData({
+        ...formData,
+        availableTimeSlots: [...formData.availableTimeSlots, newTimeSlot],
+      });
+      setNewTimeSlot('');
+    }
+  };
+
+  const removeTimeSlot = (timeSlot: string) => {
+    setFormData({
+      ...formData,
+      availableTimeSlots: formData.availableTimeSlots.filter(slot => slot !== timeSlot),
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -207,7 +226,54 @@ export function WorkerDashboard() {
                 <p className="text-lg">{formData.availability.join(',')}</p>
               )}
             </div>
-
+{/* Time Slots Management */}
+<div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Available Time Slots
+              </label>
+              {isEditing ? (
+                <>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={newTimeSlot}
+                      onChange={(e) => setNewTimeSlot(e.target.value)}
+                      placeholder="e.g., 10:00 AM - 11:00 AM"
+                      className="px-2 py-1 rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={addTimeSlot}
+                      className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {formData.availableTimeSlots.map((timeSlot) => (
+                      <div key={timeSlot} className="flex items-center gap-2">
+                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-md">
+                          {timeSlot}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeTimeSlot(timeSlot)}
+                          className="text-red-500"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="text-lg">
+                  {formData.availableTimeSlots.length > 0
+                    ? formData.availableTimeSlots.join(', ')
+                    : 'No available time slots'}
+                </p>
+              )}
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Description
@@ -225,6 +291,8 @@ export function WorkerDashboard() {
                 <p className="text-lg">{formData.description}</p>
               )}
             </div>
+
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
