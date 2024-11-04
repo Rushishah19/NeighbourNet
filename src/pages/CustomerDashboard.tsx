@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useStore } from '../store';
 import { Star, MapPin, Clock, DollarSign, Briefcase, Award, Wallet, Search, CalendarIcon, MessageSquare } from 'lucide-react';
 import { ContactModal } from '../components/ContactModal.tsx';
+import { BookingModal } from '../components/BookingModel.tsx';
 import { Worker } from '../types';
 
 export function CustomerDashboard() {
@@ -11,7 +12,7 @@ export function CustomerDashboard() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedRating, setSelectedRating] = useState('');
   const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
-
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const allSkills = [...new Set(workers.flatMap(w => w.skills))];
   const allLocations = [...new Set(workers.map(w => w.location))];
   const ratingOptions = ['4.5+', '4.0+', '3.5+', '3.0+', 'All'];
@@ -41,7 +42,11 @@ const isSlotSelected = (workerId: string, timeSlot: string) => {
   return selectedTimeSlots[workerId]?.has(timeSlot) ?? false;
 };
 
-
+// Booking 
+const handleBooking = (worker: Worker) => {
+  setSelectedWorker(worker);
+  setIsBookingModalOpen(true);
+};
   
   const filteredWorkers = workers.filter((worker) => {
     const matchesSearch = worker.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -177,7 +182,7 @@ const isSlotSelected = (workerId: string, timeSlot: string) => {
                 {worker.availabilityNumber}/hour
               </div>
               
-              <div className="mt-4">
+              {/* <div className="mt-4">
   <div className="text-sm font-medium text-gray-700 mb-2">Available Time Slots</div>
   <div className="grid grid-cols-4 gap-2">
     {worker.availableTimeSlots && worker.availableTimeSlots.length > 0 ? (
@@ -196,7 +201,7 @@ const isSlotSelected = (workerId: string, timeSlot: string) => {
       <div className="text-gray-500">No available time slots</div>
     )}
   </div>
-</div>
+</div> */}
 
 
               <div className="flex items-center text-gray-600">
@@ -247,11 +252,11 @@ const isSlotSelected = (workerId: string, timeSlot: string) => {
               </button>
 
               <button
-                onClick={() => setSelectedWorker(worker)}
+                onClick={() => handleBooking(worker)}
                 className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Wallet size={16} className="mr-2" />
-                Cart
+                Book Now
               </button>
             </div>
           </div>
@@ -262,6 +267,16 @@ const isSlotSelected = (workerId: string, timeSlot: string) => {
         <ContactModal
           worker={selectedWorker}
           onClose={() => setSelectedWorker(null)}
+        />
+      )}
+
+{isBookingModalOpen && selectedWorker && (
+        <BookingModal
+          worker={selectedWorker}
+          onClose={() => {
+            setIsBookingModalOpen(false);
+            setSelectedWorker(null);
+          }}
         />
       )}
 
