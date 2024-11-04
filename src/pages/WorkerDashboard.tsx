@@ -226,8 +226,27 @@ export function WorkerDashboard() {
                 <p className="text-lg">{formData.availability.join(',')}</p>
               )}
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              {isEditing ? (
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={4}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              ) : (
+                <p className="text-lg">{formData.description}</p>
+              )}
+            </div>
+
 {/* Time Slots Management */}
-<div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available Time Slots
               </label>
@@ -274,25 +293,6 @@ export function WorkerDashboard() {
                 </p>
               )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              {isEditing ? (
-                <textarea
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  rows={4}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              ) : (
-                <p className="text-lg">{formData.description}</p>
-              )}
-            </div>
-
-
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
