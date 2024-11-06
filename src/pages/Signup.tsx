@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
+import { signupUser } from '../services/api';
 
 export function Signup() {
   const [userType, setUserType] = useState<'worker' | 'customer'>('customer');
@@ -12,6 +13,7 @@ export function Signup() {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [passwordValidations, setPasswordValidations] = useState({
     minLength: false,
     uppercase: false,
@@ -20,7 +22,7 @@ export function Signup() {
   });
 
   const navigate = useNavigate();
-  const { addUser, isEmailRegistered } = useStore();
+  const { addUser } = useStore();
 
   const handlePasswordChange = (password: string) => {
     setFormData({ ...formData, password });
@@ -33,30 +35,50 @@ export function Signup() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
+    try {
+      // Validate password match
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+
+      // Validate password requirements
+      if (!Object.values(passwordValidations).every(Boolean)) {
+        setError('Please meet all password requirements');
+        return;
+      }
+
+      const userData = {
+        email: formData.email,
+        name: formData.name,
+        phone: formData.phone,
+        password: formData.password,
+        type: userType,
+      };
+
+      const response = await signupUser(userData);
+      
+      // Add user to local store
+      addUser({
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.name,
+        phone: response.user.phone,
+        type: response.user.type,
+      });
+
+      // Redirect to login
+      navigate('/login');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account');
+    } finally {
+      setIsLoading(false);
     }
-
-    if (isEmailRegistered(formData.email)) {
-      setError('Email is already registered');
-      return;
-    }
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      email: formData.email,
-      name: formData.name,
-      phone: formData.phone,
-      type: userType,
-    };
-
-    addUser(newUser);
-    navigate('/login');
   };
 
   return (
@@ -66,6 +88,7 @@ export function Signup() {
         
         <div className="flex justify-center space-x-4 mb-6">
           <button
+            type="button"
             className={`px-4 py-2 rounded-lg ${
               userType === 'customer' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'
             }`}
@@ -74,6 +97,7 @@ export function Signup() {
             Customer
           </button>
           <button
+            type="button"
             className={`px-4 py-2 rounded-lg ${
               userType === 'worker' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'
             }`}
@@ -161,9 +185,12 @@ export function Signup() {
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+            disabled={isLoading}
+            className={`w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Sign Up
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
       </div>
