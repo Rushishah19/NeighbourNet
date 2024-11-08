@@ -3,13 +3,13 @@ import { Briefcase, Search, Users } from 'lucide-react';
 
 export function Home() {
   return (
-    <div className="con bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url(https://img.freepik.com/free-photo/young-handsome-gardener-watering-taking-care-plants-close-up_176420-3802.jpg?t=st=1730693905~exp=1730697505~hmac=2bb18e5b57ec615af1210648f2123fb0310f986b0d444738d49c5309730c8a66&w=2000)" }}>
+    <div className="con bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url(https://images.pexels.com/photos/9606949/pexels-photo-9606949.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)" }}>
       <div className="container mx-auto px-4 py-12  ">
         <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl font-bold text-white mb-6">
             Connect with Skilled Professionals in Canada
           </h1>
-          <p className="text-xl text-gray-900 mb-12">
+          <p className="text-xl text-white mb-12">
             Find skilled workers or offer your services across Canada. Join our community
             of professionals and customers.
           </p>
