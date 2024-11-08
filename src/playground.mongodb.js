@@ -14,17 +14,19 @@ db.users.createIndex({ "type": 1 });
 // Insert test users
 db.users.insertMany([
   {
-    email: "customer1@example.com",
+    email: "rushi2@example.com",
     name: "Customer One",
     phone: "1234567890",
     type: "customer",
+    password:"RShah@11",
     createdAt: new Date()
   },
   {
-    email: "worker1@example.com",
+    email: "priya@example.com",
     name: "Worker One",
     phone: "9876543210",
     type: "worker",
+    password:"RShah@22",
     createdAt: new Date()
   }
 ]);

@@ -1,50 +1,49 @@
-import express from 'express';
-import User from '../models/User.js';
-import bcrypt from 'bcryptjs';
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
 
-const router = express.Router();
+// Parse JSON bodies
+app.use(bodyParser.json());
 
-// Signup
-router.post('/signup', async (req, res) => {
-  try {
-    console.log('Received signup request:', req.body);
-    const { email, name, phone, password, type } = req.body;
+// Mock user database
+let users = [];
 
-    // Validate required fields
-    if (!email || !name || !phone || !password || !type) {
-      console.log('Missing required fields:', { email, name, phone, type });
-      return res.status(400).json({ message: 'All fields are required' });
-    }
+// app.post('/api/signup', (req, res) => {
+//   const { email, name, phone, password, type } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      console.log('Email already exists:', email);
-      return res.status(400).json({ message: 'Email already registered' });
-    }
+//   // Simple validation
+//   if (!email || !name || !phone || !password || !type) {
+//     return res.status(400).json({ message: 'All fields are required' });
+//   }
 
-    const user = new User({
-      email,
-      name,
-      phone,
-      password,
-      type
-    });
+//   // Create new user (mock database insert)
+//   const newUser = { id: Date.now(), email, name, phone, password, type };
+//   users.push(newUser);
 
-    await user.save();
-    console.log('User created successfully:', user._id);
-
-    res.status(201).json({
-      message: 'User created successfully',
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        phone: user.phone,
-        type: user.type
+//   return res.status(201).json({ message: 'User created', user: newUser });
+// });
+app.post('/api/signup', async (req, res) => {
+    try {
+      const { email, name, phone, password, type } = req.body;
+  
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
       }
-    });
-  } catch (error) {
-    console.error('Signup error:', error);
-    res.status(500).json({ message: 'Error creating user', error: error.message });
-  }
+  
+      const newUser = new User({ email, name, phone, password, type });
+      await newUser.save();
+  
+      res.status(201).json({ user: newUser });
+    } catch (error) {
+      console.error('Signup error:', error.message);  // Log the error
+      console.error(error.stack);  // Log stack trace for debugging
+      res.status(500).json({ message: 'Server error, could not create user' });
+    }
+  });
+  
+
+const PORT = 5173;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

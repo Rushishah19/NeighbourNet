@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
-import { signupUser } from '../services/api';
 
 export function Signup() {
   const [userType, setUserType] = useState<'worker' | 'customer'>('customer');
@@ -21,6 +20,8 @@ export function Signup() {
     specialChar: false,
   });
 
+  const API_BASE_URL = 'http://localhost:5173/api';
+
   const navigate = useNavigate();
   const { addUser } = useStore();
 
@@ -35,24 +36,81 @@ export function Signup() {
     });
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError('');
+  //   setIsLoading(true);
+  
+  //   try {
+  //     if (formData.password !== formData.confirmPassword) {
+  //       setError('Passwords do not match');
+  //       setIsLoading(false);
+  //       return;
+  //     }
+  
+  //     if (!Object.values(passwordValidations).every(Boolean)) {
+  //       setError('Please meet all password requirements');
+  //       setIsLoading(false);
+  //       return;
+  //     }
+  
+  //     const userData = {
+  //       email: formData.email,
+  //       name: formData.name,
+  //       phone: formData.phone,
+  //       password: formData.password,
+  //       type: userType,
+  //     };
+  
+  //     const response = await fetch(`${API_BASE_URL}/signup`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(userData),
+  //     });
+  
+  //     // Ensure the response is valid JSON
+  //     const textData = await response.text();
+  //     const data = textData ? JSON.parse(textData) : null;
+  
+  //     if (response.ok && data) {
+  //       addUser({
+  //         id: data.user.id,
+  //         email: data.user.email,
+  //         name: data.user.name,
+  //         phone: data.user.phone,
+  //         type: data.user.type,
+  //       });
+  //       navigate('/login');
+  //     } else {
+  //       setError(data?.message || 'Failed to create account');
+  //     }
+  //   } catch (err: any) {
+  //     setError(err.message || 'Error occurred during signup');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
+  
     try {
-      // Validate password match
       if (formData.password !== formData.confirmPassword) {
         setError('Passwords do not match');
+        setIsLoading(false);
         return;
       }
-
-      // Validate password requirements
+  
       if (!Object.values(passwordValidations).every(Boolean)) {
         setError('Please meet all password requirements');
+        setIsLoading(false);
         return;
       }
-
+  
       const userData = {
         email: formData.email,
         name: formData.name,
@@ -60,32 +118,47 @@ export function Signup() {
         password: formData.password,
         type: userType,
       };
-
-      const response = await signupUser(userData);
-      
-      // Add user to local store
-      addUser({
-        id: response.user.id,
-        email: response.user.email,
-        name: response.user.name,
-        phone: response.user.phone,
-        type: response.user.type,
+  
+      const response = await fetch(`${API_BASE_URL}/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
       });
-
-      // Redirect to login
-      navigate('/login');
+  
+      const textData = await response.text();
+      console.log('Response Status:', response.status);
+      console.log('Response Body:', textData);
+  
+      const data = textData ? JSON.parse(textData) : null;
+  
+      if (response.ok && data) {
+        addUser({
+          id: data.user._id,  // Use `_id` if that’s MongoDB’s unique ID field
+          email: data.user.email,
+          name: data.user.name,
+          phone: data.user.phone,
+          type: data.user.type,
+        });
+        navigate('/login');
+      } else {
+        setError(data?.message || 'Failed to create account');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      console.error('Error during signup:', err);
+      setError(err.message || 'Error occurred during signup');
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
-        
+
         <div className="flex justify-center space-x-4 mb-6">
           <button
             type="button"

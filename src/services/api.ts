@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'http://localhost:5173/api' ;
 
 export const signupUser = async (userData: {
   email: string;
@@ -31,4 +31,6 @@ export const signupUser = async (userData: {
     console.error('Signup error:', error);
     throw error;
   }
+  
 };
+console.log(signupUser);
